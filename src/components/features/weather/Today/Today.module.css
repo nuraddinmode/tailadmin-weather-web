@@ -1,0 +1,163 @@
+.today {
+  background-color: rgb(38 40 44);
+  max-width: 452px;
+  height: 902px;
+  padding: 40px 47px;
+  border-radius: 28px;
+}
+
+.today__search {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  width: 341px;
+  height: 54px;
+  padding: 10px 20px;
+  background-color: #c2d4d3;
+  border-radius: 30px;
+}
+
+.today__form {
+  position: relative;
+}
+
+.today__searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: "Plus Jakarta Sans";
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 36px;
+  color: #333;
+}
+
+.today__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: absolute;
+  top: 130%;
+  left: 0;
+  background-color: #2c2e32;
+  width: 200px;
+  border-radius: 12px;
+}
+
+.today__item {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 22px;
+  color: white;
+  padding: 5px 12px;
+}
+
+.today__item:hover {
+  background-color: #252222;
+}
+
+.today__item:first-child {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.today__item:last-child {
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.today__main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.today__image {
+  width: 316px;
+  height: 316px;
+  margin-bottom: 49px;
+}
+
+.today__temperature {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 700;
+  font-size: 96px;
+  line-height: 36px;
+  color: #ffffff;
+  margin-bottom: 49px;
+}
+
+.today__meta {
+  display: flex;
+  justify-content: space-between;
+  max-width: 341px;
+  padding: 20px 0;
+}
+
+.today__metaItem {
+  font-family: "Plus Jakarta Sans";
+  font-weight: 400;
+  font-size: 25px;
+  line-height: 36px;
+  color: #ffffff;
+  letter-spacing: 0;
+}
+
+.today__details {
+  margin-bottom: 75px;
+}
+
+.today__detailRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.today__detailText {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 36px;
+  color: #ffffff;
+}
+
+.today__stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px;
+  max-width: 341px;
+  background-color: #252222a6;
+  border-radius: 12px;
+}
+
+.today__stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.today__statIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.today__statInfo {
+  display: flex;
+  flex-direction: column;
+  color: #ffffff;
+}
+
+.today__statNumValue {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: bold;
+}
+
+.today__statStringValue {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 200;
+}
+
+.today__statInfo p:first-child {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 600;
+}

@@ -18,6 +18,7 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import WeatherPage from "./pages/WeatherPage";
 
 export default function App() {
   return (
@@ -51,6 +52,8 @@ export default function App() {
             {/* Charts */}
             <Route path="/line-chart" element={<LineChart />} />
             <Route path="/bar-chart" element={<BarChart />} />
+
+            <Route path="/weather" element={<WeatherPage />} />
           </Route>
 
           {/* Auth Layout */}
