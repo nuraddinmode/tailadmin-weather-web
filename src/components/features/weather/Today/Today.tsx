@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Today.module.css";
+
 import weatherImg from "../assets/Weather image.png";
 import cloudRain from "../assets/Cloud Rain.svg";
 import tempLow from "../assets/Temperature 01.svg";
@@ -20,7 +21,6 @@ interface TodayProps {
   speed: number;
   min: number;
   max: number;
-  icon: string;
 }
 
 const Today: React.FC<TodayProps> = ({
@@ -33,21 +33,18 @@ const Today: React.FC<TodayProps> = ({
   speed,
   min,
   max,
-
 }) => {
-  const [value, setValue] = useState<string>("");
+  const [value, setValue] = useState("");
   const [filteredOptions, setFilteredOptions] = useState<Options[]>([]);
-  const [bool, setBool] = useState<boolean>(false);
+  const [bool, setBool] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-
-    setBool(newValue.length > 0);
-    setValue(newValue);
-    const filtered = options.filter((option) =>
-      option.city.toLowerCase().includes(newValue.toLowerCase())
+    const v = e.target.value;
+    setValue(v);
+    setBool(v.length > 0);
+    setFilteredOptions(
+      options.filter((o) => o.city.toLowerCase().includes(v.toLowerCase()))
     );
-    setFilteredOptions(filtered);
   };
 
   const handleClick = (e: React.MouseEvent<HTMLLIElement>) => {
@@ -56,29 +53,35 @@ const Today: React.FC<TodayProps> = ({
   };
 
   useEffect(() => {
-    const handleClickOutside = () => setBool(false);
-    window.addEventListener("click", handleClickOutside);
-    return () => window.removeEventListener("click", handleClickOutside);
+    const close = () => setBool(false);
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
   }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (value.trim()) {
       onSubmitCity(value.trim());
       setValue("");
     }
   };
 
+  // flex items-center gap-3
+  // w-full
+  // bg-gray-100 dark:bg-gray-800
+  // border border-gray-200 dark:border-gray-700
+  // rounded-full
+  // px-5 py-2
+  // mb-10
+
   return (
     <div
       className="
-        w-full h-full rounded-2xl
-        bg-white text-gray-900
-        dark:bg-[#1F2635] dark:text-white
-        shadow-lg
-        flex flex-col items-center
-        p-6
+        w-full h-full
+        rounded-2xl
+         
+        shadow-sm
+        p-6 flex flex-col
       "
     >
       {/* SEARCH */}
@@ -86,63 +89,51 @@ const Today: React.FC<TodayProps> = ({
         className="
           flex items-center gap-3
           w-full
-          bg-gray-100
-          dark:bg-[#273044]
-          border border-gray-200
-          dark:border-[#3A4761]
+          bg-gray-100 dark:bg-gray-800
+          border border-gray-200 dark:border-gray-700
           rounded-full
           px-5 py-2
           mb-10
         "
       >
-        <img src={searchIcon} alt="Search icon" className="w-5 h-5" />
+        <img src={searchIcon} className="w-5 h-5" />
 
         <form
-          className={`${styles.today__form} flex-1`}
+          className={`${styles.today__form} flex-1 relative`}
           onSubmit={handleSubmit}
         >
           <input
             value={value}
             onChange={handleChange}
-            type="text"
             placeholder="Search city..."
             className="
-              bg-transparent
-              outline-none
-              w-full
-              text-gray-800
-              dark:text-white
-              text-lg
+              bg-transparent outline-none w-full 
+              text-gray-800 dark:text-white/90 text-lg
             "
           />
 
           {bool && (
             <ul
               className="
-                absolute left-0 top-[120%]
-                bg-white dark:bg-[#273044]
-                w-full
-                rounded-xl
-                shadow-lg
-                flex flex-col gap-2
-                z-50
-                border border-gray-200 dark:border-[#3A4761]
+                absolute top-[120%] left-0 w-full z-50
+                bg-white dark:bg-white/[0.05]
+                border border-gray-200 dark:border-gray-700
+                rounded-xl shadow-lg
+                flex flex-col gap-1
               "
             >
-              {filteredOptions.map((filter) => (
+              {filteredOptions.map((opt) => (
                 <li
+                  key={opt.id}
                   onClick={handleClick}
-                  key={filter.id}
                   className="
-                    text-gray-800 dark:text-white
-                    text-lg
-                    px-3 py-2
-                    hover:bg-gray-100 dark:hover:bg-[#2f3b52]
-                    rounded-md
-                    cursor-pointer
+                    px-3 py-2 cursor-pointer
+                    text-gray-800 dark:text-white/90
+                    hover:bg-gray-100 dark:hover:bg-gray-700/30
+                    rounded-lg text-lg
                   "
                 >
-                  {filter.city}
+                  {opt.city}
                 </li>
               ))}
             </ul>
@@ -150,95 +141,80 @@ const Today: React.FC<TodayProps> = ({
         </form>
       </div>
 
-      {/* MAIN ICON + TEMP */}
+      {/* MAIN ICON */}
       <div className="flex flex-col items-center mb-10">
         <img
-          className="w-[260px] h-[260px] object-contain mb-8"
           src={weatherImg}
-          alt="Weather illustration"
+          className="w-[240px] h-[240px] object-contain mb-6"
         />
-        <h2 className="text-7xl font-bold mb-8">
+        <h2 className="text-6xl font-bold text-gray-800 dark:text-white/90">
           {Math.floor(Number(temp))}°C
         </h2>
       </div>
 
       {/* CITY + DAY */}
       <div className="flex justify-between w-full text-2xl mb-8">
-        <p>{currentCity}</p>
-        <p>{day}</p>
+        <p className="text-gray-800 dark:text-white/90">{currentCity}</p>
+        <p className="text-gray-800 dark:text-white/90">{day}</p>
       </div>
 
       {/* DETAILS */}
       <div className="space-y-4 mb-10 w-full">
-        {/* Rain */}
         <div className="flex items-center gap-3">
-          <img src={cloudRain} alt="Rain" className="w-6 h-6" />
-          <p className="text-lg font-medium text-gray-800 dark:text-white">
-            Condition - {description[0].toUpperCase() + description.slice(1)}
+          <img src={cloudRain} className="w-6 h-6" />
+          <p className="text-lg text-gray-800 dark:text-white/90">
+            Condition — {description[0].toUpperCase() + description.slice(1)}
           </p>
         </div>
 
-        {/* Min temp */}
         <div className="flex items-center gap-3">
-          <img src={tempLow} alt="Low temp" className="w-6 h-6" />
-          <p className="text-lg font-medium text-gray-800 dark:text-white">
+          <img src={tempLow} className="w-6 h-6" />
+          <p className="text-lg text-gray-800 dark:text-white/90">
             Min Temperature {min}°C
           </p>
         </div>
 
-        {/* Max temp */}
         <div className="flex items-center gap-3">
-          <img src={tempHigh} alt="High temp" className="w-6 h-6" />
-          <p className="text-lg font-medium text-gray-800 dark:text-white">
+          <img src={tempHigh} className="w-6 h-6" />
+          <p className="text-lg text-gray-800 dark:text-white/90">
             Max Temperature {max}°C
           </p>
         </div>
       </div>
 
-      {/* STATS (Humidity / Wind) */}
+      {/* HUMIDITY / WIND */}
       <div
         className="
-          w-full
-          rounded-2xl
-          px-5 py-4
-          flex justify-between items-center gap-6
-          bg-gray-100
-          dark:bg-[#273044]
-          border border-gray-200
-          dark:border-[#3A4761]
+          w-full rounded-2xl
+          border border-gray-200 dark:border-gray-800
+          bg-gray-50 dark:bg-white/[0.05]
           shadow-sm
+          px-5 py-4
+          flex justify-between items-center
         "
       >
-        {/* Humidity */}
+        {/* HUMIDITY */}
         <div className="flex items-center gap-3">
-          <img
-            src={humidityIcon}
-            alt="Humidity"
-            className="w-7 h-7 opacity-80"
-          />
-          <div className="flex flex-col leading-tight">
-            <span className="text-xl font-semibold text-gray-900 dark:text-white">
-              {humidity} %
-            </span>
-            <span className="text-sm text-gray-500 dark:text-gray-300">
-              Humidity
-            </span>
+          <img src={humidityIcon} className="w-7 h-7 opacity-80" />
+          <div>
+            <p className="text-xl font-semibold text-gray-900 dark:text-white">
+              {humidity}%
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Humidity</p>
           </div>
         </div>
 
-        {/* Divider */}
+        {/* LINE */}
         <div className="w-px h-10 bg-gray-300 dark:bg-white/20"></div>
 
-        {/* Wind */}
+        {/* WIND */}
         <div className="flex items-center gap-3">
-          <img src={windIcon} alt="Wind" className="w-7 h-7 opacity-80" />
-          <div className="flex flex-col leading-tight">
-            <span className="text-xl font-semibold text-gray-900 dark:text-white">
+          <img src={windIcon} className="w-7 h-7 opacity-80" />
+          <div>
+            <p className="text-xl font-semibold text-gray-900 dark:text-white">
               {speed} km/h
-            </span>
-            <span className="text-sm text-gray-500 dark:text-gray-300">
-              Wind Speed
-            </span>
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Wind</p>
           </div>
         </div>
       </div>

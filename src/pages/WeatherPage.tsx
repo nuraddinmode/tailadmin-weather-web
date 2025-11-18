@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+
 import Today from "../components/features/weather/Today/Today";
 import Week from "../components/features/weather/Week/Week";
 
@@ -29,19 +30,14 @@ interface WeatherData {
 
 const API_KEY = "9c5bc2c2107dea7d085dc35748ec1cc9";
 
-interface GeolocationError {
-  code: number;
-  message: string;
-}
-
 function WeatherPage() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+
   const [weekData, setWeekData] = useState<any[]>([]);
+  const [hourly, setHourly] = useState<any[]>([]);
   const [uv, setUv] = useState<number | null>(null);
   const [aqi, setAqi] = useState<number | null>(null);
 
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [city, setCity] = useState<string>("");
   const [dayOfWeek, setDayOfWeek] = useState<string>("");
 
@@ -68,23 +64,23 @@ function WeatherPage() {
 
       setWeatherData(response.data);
 
+      // Set city + day name
       const date = new Date(response.data.dt * 1000);
-      const day = date.toLocaleDateString("en-US", { weekday: "long" });
-      setDayOfWeek(day);
+      setDayOfWeek(date.toLocaleDateString("en-US", { weekday: "long" }));
       setCity(response.data.name);
 
-      // ------------------------------
-      // ONE CALL (7 DAYS, UV INDEX)
-      // ------------------------------
+      // --- ONE CALL 3.0 ---
       try {
         const onecall = await axios.get(
           `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
         );
 
-        setWeekData(onecall.data.daily.slice(0, 7)); // 7 дней
+        setWeekData(onecall.data.daily.slice(0, 7)); // 7 days
         setUv(onecall.data.current.uvi);
+        setHourly(onecall.data.hourly); // <<<<<< REQUIRED
+        console.log("Hourly Loaded:", onecall.data.hourly);
 
-        // AQI (ОТДЕЛЬНЫЙ API)
+        // AQI (air pollution)
         const aqiRes = await axios.get(
           `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`
         );
@@ -92,13 +88,8 @@ function WeatherPage() {
       } catch (err) {
         console.error("ONE CALL ERROR", err);
       }
-
-      setLoading(false);
-      setError(null);
     } catch (err) {
       console.error("WEATHER ERROR", err);
-      setError("Не удалось получить данные о погоде");
-      setLoading(false);
     }
   };
 
@@ -149,7 +140,8 @@ function WeatherPage() {
   return (
     <div className="p-6">
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <div className="bg-gray-800 dark:bg-[#26282C] rounded-2xl p-6 shadow-lg">
+        {/* LEFT SIDE */}
+        <div className="rounded-2xl">
           <Today
             onSubmitCity={handleCitySubmit}
             temp={String(main.temp)}
@@ -163,8 +155,10 @@ function WeatherPage() {
           />
         </div>
 
-        <div className="xl:col-span-2 bg-gray-800 dark:bg-[#26282C] rounded-2xl p-6 shadow-lg">
+        {/* RIGHT SIDE */}
+        <div className="xl:col-span-2 rounded-2xl p-6 shadow-lg">
           <Week
+            hourly={hourly}
             pressure={main.pressure}
             sunrise={sys.sunrise}
             sunset={sys.sunset}
