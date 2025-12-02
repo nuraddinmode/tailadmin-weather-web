@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import {
+  getLocationByIP,
+  fetchWeatherData,
+  getCurrentPosition,
+  fetchCityWeather,
+} from "../utils/getWeather";
 
 import Today from "../components/features/weather/Today/Today";
 import Week from "../components/features/weather/Week/Week";
@@ -28,11 +33,8 @@ interface WeatherData {
   dt: number;
 }
 
-const API_KEY = "9c5bc2c2107dea7d085dc35748ec1cc9";
-
 function WeatherPage() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-
   const [weekData, setWeekData] = useState<any[]>([]);
   const [hourly, setHourly] = useState<any[]>([]);
   const [uv, setUv] = useState<number | null>(null);
@@ -41,66 +43,33 @@ function WeatherPage() {
   const [city, setCity] = useState<string>("");
   const [dayOfWeek, setDayOfWeek] = useState<string>("");
 
-  // --- LOCATION BY IP ---
-  const getLocationByIP = async () => {
-    try {
-      const res = await fetch("https://ipapi.co/json/");
-      const json = await res.json();
-      if (json.latitude && json.longitude) {
-        return { lat: json.latitude, lon: json.longitude };
-      }
-      return null;
-    } catch {
-      return null;
-    }
+  // --- Получаем погоду и устанавливаем состояние ---
+  const getWeather = async (lat: number, lon: number) => {
+    const data = await fetchWeatherData(lat, lon);
+    if (!data) return;
+
+    setWeatherData(data.weather);
+    setDayOfWeek(data.date.toLocaleDateString("en-US", { weekday: "long" }));
+    setCity(data.weather.name);
+
+    setWeekData(data.oneCall.daily.slice(0, 7));
+    setHourly(data.oneCall.hourly);
+    setUv(data.oneCall.current.uvi);
+    setAqi(data.aqi);
   };
 
-  // --- GET WEATHER + ONE CALL ---
-  const getWeatherData = async (lat: number, lon: number) => {
-    try {
-      const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=en`
-      );
+  const addToFavorites = (city: string) => {
+    if (!city) return;
 
-      setWeatherData(response.data);
+    const saved = localStorage.getItem("favorites-cities");
+    const list = saved ? JSON.parse(saved) : [];
 
-      // Set city + day name
-      const date = new Date(response.data.dt * 1000);
-      setDayOfWeek(date.toLocaleDateString("en-US", { weekday: "long" }));
-      setCity(response.data.name);
+    if (list.some((c: any) => c.city === city)) return;
 
-      // --- ONE CALL 3.0 ---
-      try {
-        const onecall = await axios.get(
-          `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
-        );
+    const newCity = { id: crypto.randomUUID(), city };
 
-        setWeekData(onecall.data.daily.slice(0, 7)); // 7 days
-        setUv(onecall.data.current.uvi);
-        setHourly(onecall.data.hourly); // <<<<<< REQUIRED
-        console.log("Hourly Loaded:", onecall.data.hourly);
-
-        // AQI (air pollution)
-        const aqiRes = await axios.get(
-          `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`
-        );
-        setAqi(aqiRes.data.list[0].main.aqi);
-      } catch (err) {
-        console.error("ONE CALL ERROR", err);
-      }
-    } catch (err) {
-      console.error("WEATHER ERROR", err);
-    }
-  };
-
-  // --- GEOLOCATION ---
-  const getCurrentPosition = (): Promise<GeolocationPosition> => {
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        timeout: 15000,
-      });
-    });
+    const updated = [...list, newCity];
+    localStorage.setItem("favorites-cities", JSON.stringify(updated));
   };
 
   // --- INITIAL LOAD ---
@@ -108,14 +77,14 @@ function WeatherPage() {
     const load = async () => {
       try {
         const pos = await getCurrentPosition();
-        await getWeatherData(pos.coords.latitude, pos.coords.longitude);
+        await getWeather(pos.coords.latitude, pos.coords.longitude);
       } catch {
         const ip = await getLocationByIP();
         if (ip) {
-          await getWeatherData(ip.lat, ip.lon);
+          await getWeather(ip.lat, ip.lon);
         } else {
           // default Moscow
-          await getWeatherData(55.7558, 37.6173);
+          await getWeather(55.7558, 37.6173);
         }
       }
     };
@@ -124,13 +93,16 @@ function WeatherPage() {
 
   // --- SEARCH CITY ---
   const handleCitySubmit = async (inputCity: string) => {
-    const res = await fetch(
-      `http://api.openweathermap.org/geo/1.0/direct?q=${inputCity}&limit=1&appid=${API_KEY}`
-    );
-    const data = await res.json();
-    if (data.length > 0) {
-      await getWeatherData(data[0].lat, data[0].lon);
-    }
+    const data = await fetchCityWeather(inputCity);
+    if (!data) return;
+
+    setWeatherData(data.weather);
+    setDayOfWeek(data.date.toLocaleDateString("en-US", { weekday: "long" }));
+    setCity(data.weather.name);
+    setWeekData(data.oneCall.daily.slice(0, 7));
+    setHourly(data.oneCall.hourly);
+    setUv(data.oneCall.current.uvi);
+    setAqi(data.aqi);
   };
 
   if (!weatherData) return null;
@@ -144,6 +116,7 @@ function WeatherPage() {
         <div className="rounded-2xl">
           <Today
             onSubmitCity={handleCitySubmit}
+            onAddToFavorites={addToFavorites}
             temp={String(main.temp)}
             currentCity={city}
             day={dayOfWeek}

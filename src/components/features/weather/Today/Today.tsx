@@ -21,6 +21,7 @@ interface TodayProps {
   speed: number;
   min: number;
   max: number;
+  onAddToFavorites: (city: string) => void;
 }
 
 const Today: React.FC<TodayProps> = ({
@@ -33,6 +34,7 @@ const Today: React.FC<TodayProps> = ({
   speed,
   min,
   max,
+  onAddToFavorites,
 }) => {
   const [value, setValue] = useState("");
   const [filteredOptions, setFilteredOptions] = useState<Options[]>([]);
@@ -157,6 +159,20 @@ const Today: React.FC<TodayProps> = ({
         <p className="text-gray-800 dark:text-white/90">{currentCity}</p>
         <p className="text-gray-800 dark:text-white/90">{day}</p>
       </div>
+
+      <button
+        onClick={() => onAddToFavorites(currentCity)}
+        className="
+    px-4 py-2 rounded-xl
+    bg-yellow-400/20 dark:bg-yellow-500/20
+    text-yellow-700 dark:text-yellow-300
+    hover:bg-yellow-400/30 transition
+    text-sm font-medium
+    mb-3.5
+  "
+      >
+        ★ Add to favorites
+      </button>
 
       {/* DETAILS */}
       <div className="space-y-4 mb-10 w-full">
