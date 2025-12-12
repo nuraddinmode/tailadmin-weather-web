@@ -18,4 +18,6 @@ export const options: Options[] = [
   { value: "city-11", city: "Tblisi", id: 11 },
   { value: "city-12", city: "Yerevan", id: 12 },
   { value: "city-13", city: "Tallin", id: 13 },
+  { value: "city-14", city: "Paris", id: 14 },
+  { value: "city-15", city: "Prague", id: 15 },
 ];
