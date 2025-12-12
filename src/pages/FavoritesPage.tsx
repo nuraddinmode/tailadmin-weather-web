@@ -1,42 +1,51 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import FavoritesItem from "../components/features/favorites/FavoritesItem/FavoritesItem";
-
-interface FavCity {
-  id: string;
-  city: string;
-}
+import { useFavoritesStore } from "../store/favoriteStore";
+import { useFavoriteWeatherStore } from "../store/favoritesWeatherStore";
 
 const FavoritesPage: React.FC = () => {
-  const [favorites, setFavorites] = useState<FavCity[]>([]);
+  const favorites = useFavoritesStore((s) => s.favorites);
+  const removeFavorite = useFavoritesStore((s) => s.removeFavorite);
+
+  const weather = useFavoriteWeatherStore((s) => s.weather);
+  const loadWeather = useFavoriteWeatherStore((s) => s.loadWeatherForCities);
+  const clearWeather = useFavoriteWeatherStore((s) => s.clearWeather);
 
   useEffect(() => {
-    const saved = localStorage.getItem("favorites-cities");
-    if (saved) setFavorites(JSON.parse(saved));
-  }, []);
+    if (favorites.length > 0) {
+      loadWeather(favorites);
+    }
+  }, [favorites, loadWeather]);
 
-  const removeCity = (id: string) => {
-    const updated = favorites.filter((c) => c.id !== id);
-    setFavorites(updated);
-    localStorage.setItem("favorites-cities", JSON.stringify(updated));
+  const handleRemove = (id: string) => {
+    removeFavorite(id);
+    clearWeather(id);
   };
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">
-        Favorite Cities
+      <h1 className="text-3xl font-bold mb-6 text-gray-800 text-yellow-700 dark:text-yellow-300">
+        Featured Cities
       </h1>
 
-      {favorites.length === 0 ? (
+      {weather.length === 0 && (
         <p className="text-lg text-gray-600 dark:text-gray-300">
           No favorites yet. Add some cities!
         </p>
-      ) : (
+      )}
+
+      {weather.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-          {favorites.map((city) => (
+          {weather.map((fav) => (
             <FavoritesItem
-              key={city.id}
-              city={city.city}
-              onRemove={() => removeCity(city.id)}
+              key={fav.id}
+              city={fav.name}
+              temp={fav.temp}
+              min={fav.min}
+              max={fav.max}
+              description={fav.description}
+              icon={fav.icon}
+              onRemove={() => handleRemove(fav.id)}
             />
           ))}
         </div>

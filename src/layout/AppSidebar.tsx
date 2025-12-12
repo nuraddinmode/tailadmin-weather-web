@@ -10,7 +10,7 @@ const AppSidebar = () => {
 
   return (
     <aside
-      className={`fixed mt-16 flex flex-col top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 
+      className={`fixed flex flex-col top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 
         h-screen border-r border-gray-200 transition-all duration-300 z-50
         ${isExpanded || isMobileOpen || isHovered ? "w-[290px]" : "w-[90px]"} ${
         isMobileOpen ? "translate-x-0" : "-translate-x-full"
@@ -29,13 +29,14 @@ const AppSidebar = () => {
             <>
               <img
                 className="dark:hidden"
-                src="/images/logo/logo.svg"
+                src="/images/logo/weather-logo.svg"
                 alt="Logo"
                 width={150}
               />
               <img
                 className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
+                // src="/images/logo/logo-dark.svg"
+                src="/images/logo/weather-logo-dark.svg"
                 alt="Logo"
                 width={150}
               />

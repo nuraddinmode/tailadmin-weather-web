@@ -12,7 +12,7 @@ interface Props {
 
 const WeekDays: React.FC<Props> = ({ days }) => {
   return (
-    <div className="grid grid-cols-7 gap-4 mb-12">
+    <div className="grid grid-cols-7 gap-4 mb-14">
       {days.map((d, i) => (
         <div
           key={i}

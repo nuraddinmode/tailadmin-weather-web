@@ -9,7 +9,6 @@ interface WeekProps {
   sunrise: number;
   sunset: number;
   week: any[];
-  hourly: any[];
   uv: number | null;
   aqi: number | null;
 }
@@ -23,7 +22,6 @@ const Week: React.FC<WeekProps> = ({
   week,
   uv,
   aqi,
-  hourly,
 }) => {
   const getDayName = (ts: number) =>
     new Date(ts * 1000).toLocaleDateString("en-US", { weekday: "short" });
@@ -36,11 +34,11 @@ const Week: React.FC<WeekProps> = ({
 
   return (
     <>
-      <h2 className="text-2xl font-semibold mb-8 dark:text-white">Week</h2>
+      <h2 className="text-2xl font-semibold mb-10 dark:text-white">Week</h2>
 
       <WeekDays days={days} />
 
-      <h2 className="text-2xl font-semibold mb-8 dark:text-white">
+      <h2 className="text-2xl font-semibold mb-10 dark:text-white">
         Today’s Overview
       </h2>
 
@@ -48,7 +46,7 @@ const Week: React.FC<WeekProps> = ({
 
       <div className="grid grid-cols-5 gap-6">
         <div className="col-span-3">
-          <PrecipitationChart hourly={hourly} />
+          <PrecipitationChart />
         </div>
 
         <div className="col-span-2">

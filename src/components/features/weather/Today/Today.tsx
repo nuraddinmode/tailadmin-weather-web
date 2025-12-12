@@ -11,9 +11,12 @@ import searchIcon from "../assets/Search 01.svg";
 
 import { options, type Options } from "../../../../data/options";
 
+import { useFavoritesStore } from "../../../../store/favoriteStore";
+import { useWeatherStore } from "../../../../store/weatherStore";
+
 interface TodayProps {
   onSubmitCity: (city: string) => void;
-  temp: string;
+  temp: number;
   currentCity: string;
   day: string;
   description: string;
@@ -21,7 +24,6 @@ interface TodayProps {
   speed: number;
   min: number;
   max: number;
-  onAddToFavorites: (city: string) => void;
 }
 
 const Today: React.FC<TodayProps> = ({
@@ -34,11 +36,15 @@ const Today: React.FC<TodayProps> = ({
   speed,
   min,
   max,
-  onAddToFavorites,
 }) => {
   const [value, setValue] = useState("");
   const [filteredOptions, setFilteredOptions] = useState<Options[]>([]);
   const [bool, setBool] = useState(false);
+
+  const addFavorite = useFavoritesStore((s) => s.addFavorite);
+
+  const lat = useWeatherStore((s) => s.lat);
+  const lon = useWeatherStore((s) => s.lon);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
@@ -50,7 +56,8 @@ const Today: React.FC<TodayProps> = ({
   };
 
   const handleClick = (e: React.MouseEvent<HTMLLIElement>) => {
-    setValue(e.currentTarget.textContent || "");
+    const text = e.currentTarget.textContent || "";
+    setValue(text);
     setBool(false);
   };
 
@@ -64,24 +71,24 @@ const Today: React.FC<TodayProps> = ({
     e.preventDefault();
     if (value.trim()) {
       onSubmitCity(value.trim());
-      setValue("");
+      // не очищаем value → можно добавить в избранное с этим именем
     }
   };
 
-  // flex items-center gap-3
-  // w-full
-  // bg-gray-100 dark:bg-gray-800
-  // border border-gray-200 dark:border-gray-700
-  // rounded-full
-  // px-5 py-2
-  // mb-10
+  const handleAddFavorite = () => {
+    const displayName = (value.trim() || currentCity).trim();
+    if (!displayName) return;
+
+    if (lat == null || lon == null) return;
+
+    addFavorite(displayName, lat, lon);
+  };
 
   return (
     <div
       className="
         w-full h-full
         rounded-2xl
-         
         shadow-sm
         p-6 flex flex-col
       "
@@ -161,17 +168,17 @@ const Today: React.FC<TodayProps> = ({
       </div>
 
       <button
-        onClick={() => onAddToFavorites(currentCity)}
+        onClick={handleAddFavorite}
         className="
-    px-4 py-2 rounded-xl
-    bg-yellow-400/20 dark:bg-yellow-500/20
-    text-yellow-700 dark:text-yellow-300
-    hover:bg-yellow-400/30 transition
-    text-sm font-medium
-    mb-3.5
-  "
+          px-4 py-2 rounded-xl
+          bg-yellow-400/20 dark:bg-yellow-500/20
+          text-yellow-700 dark:text-yellow-300
+          hover:bg-yellow-400/30 transition
+          text-sm font-medium
+          mb-3.5
+        "
       >
-        ★ Add to favorites
+        ★ Add to featured cities
       </button>
 
       {/* DETAILS */}

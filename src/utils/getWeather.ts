@@ -7,6 +7,8 @@ export interface WeatherServiceResponse {
   oneCall: any;
   aqi: number;
   date: Date;
+  lat: number;
+  lon: number;
 }
 
 // --- LOCATION BY IP ---
@@ -61,6 +63,8 @@ export const fetchWeatherData = async (
       oneCall: oneCallRes.data,
       aqi: aqiRes.data.list[0].main.aqi,
       date,
+      lat,
+      lon,
     };
   } catch (err) {
     console.error("WEATHER SERVICE ERROR", err);
@@ -68,20 +72,24 @@ export const fetchWeatherData = async (
   }
 };
 
-// --- SEARCH CITY ---
+// --- SEARCH CITY (GEOCODING + WEATHER) ---
 export const fetchCityWeather = async (
   inputCity: string
 ): Promise<WeatherServiceResponse | null> => {
   try {
     const res = await fetch(
-      `http://api.openweathermap.org/geo/1.0/direct?q=${inputCity}&limit=1&appid=${API_KEY}`
+      `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
+        inputCity
+      )}&limit=1&appid=${API_KEY}`
     );
     const data = await res.json();
-    if (data.length > 0) {
-      return await fetchWeatherData(data[0].lat, data[0].lon);
+    if (Array.isArray(data) && data.length > 0) {
+      const { lat, lon } = data[0];
+      return await fetchWeatherData(lat, lon);
     }
     return null;
-  } catch {
+  } catch (err) {
+    console.error("CITY SEARCH ERROR", err);
     return null;
   }
 };
