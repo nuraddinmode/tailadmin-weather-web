@@ -28,6 +28,10 @@ const FavoritesItem: React.FC<Props> = ({
         shadow-sm
         h-[200px]
         flex flex-col
+        transition-transform duration-300
+          hover:scale-[1.03]
+          hover:bg-gray-100
+          dark:hover:bg-gray-800
       "
     >
       <div className="flex items-start justify-between mb-4">

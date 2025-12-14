@@ -74,6 +74,10 @@ const PrecipitationChart: React.FC = () => {
         p-6 shadow-sm
         h-[220px]
         transition
+        transition-transform duration-300
+          hover:scale-[1.03]
+          hover:bg-gray-100
+    dark:hover:bg-gray-800
         ${!hasRealData ? "opacity-40" : ""}
       `}
     >

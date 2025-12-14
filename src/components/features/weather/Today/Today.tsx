@@ -103,6 +103,11 @@ const Today: React.FC<TodayProps> = ({
           rounded-full
           px-5 py-2
           mb-10
+          bg-white dark:bg-gray-900
+          transition-transform duration-300
+          hover:scale-[1.03]
+          hover:bg-gray-100
+    dark:hover:bg-gray-800
         "
       >
         <img src={searchIcon} className="w-5 h-5" />
@@ -176,6 +181,8 @@ const Today: React.FC<TodayProps> = ({
           hover:bg-yellow-400/30 transition
           text-sm font-medium
           mb-3.5
+          transition-transform duration-300
+        hover:scale-[1.03]
         "
       >
         ★ Add to featured cities
@@ -214,6 +221,10 @@ const Today: React.FC<TodayProps> = ({
           shadow-sm
           px-5 py-4
           flex justify-between items-center
+          transition-transform duration-300
+          hover:scale-[1.03]
+          hover:bg-gray-100
+    dark:hover:bg-gray-800
         "
       >
         {/* HUMIDITY */}

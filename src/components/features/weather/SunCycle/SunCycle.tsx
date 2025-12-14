@@ -17,6 +17,10 @@ const SunCycle: React.FC<Props> = ({ sunrise, sunset }) => {
         p-6 shadow-sm
         h-[220px]
         flex flex-col justify-between
+        transition-transform duration-300
+        hover:scale-[1.03]
+        hover:bg-gray-100
+        dark:hover:bg-gray-800
       "
     >
       <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-white/90">

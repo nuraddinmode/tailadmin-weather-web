@@ -32,6 +32,10 @@ const Overview: React.FC<Props> = ({ uv, aqi, pressure }) => {
           p-6 shadow-sm
           h-[180px]
           flex flex-col justify-between
+          transition-transform duration-300
+          hover:scale-[1.03]
+          hover:bg-gray-100
+    dark:hover:bg-gray-800
         "
       >
         <div>
@@ -55,6 +59,10 @@ const Overview: React.FC<Props> = ({ uv, aqi, pressure }) => {
           p-6 shadow-sm
           h-[180px]
           flex flex-col justify-between
+          transition-transform duration-300
+          hover:scale-[1.03]
+          hover:bg-gray-100
+    dark:hover:bg-gray-800
         "
       >
         <div>
@@ -78,6 +86,10 @@ const Overview: React.FC<Props> = ({ uv, aqi, pressure }) => {
           p-6 shadow-sm
           h-[180px]
           flex flex-col justify-between
+          transition-transform duration-300
+          hover:scale-[1.03]
+          hover:bg-gray-100
+    dark:hover:bg-gray-800
         "
       >
         <div>

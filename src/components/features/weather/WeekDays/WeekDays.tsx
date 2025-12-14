@@ -16,13 +16,17 @@ const WeekDays: React.FC<Props> = ({ days }) => {
       {days.map((d, i) => (
         <div
           key={i}
-          className="
+          className=" 
             rounded-2xl
             border border-gray-200 dark:border-gray-800
             bg-white dark:bg-white/[0.03]
             p-4 shadow-sm
             flex flex-col items-center justify-between
             h-[150px]
+            transition-transform duration-300
+            hover:scale-[1.04]
+            hover:bg-gray-100
+            dark:hover:bg-gray-800
           "
         >
           <h3 className="text-sm font-medium text-gray-700 dark:text-white/90">
